@@ -14,10 +14,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from retrying import retry
 import sys
-import streamlit as st
-
-st.write("🔍 Running on Python version:", sys.version)
-
 
 st.set_page_config(page_title="Twitter Impersonation Checker", layout="wide")
 st.title("🕵 Twitter/X Impersonation Checker")
