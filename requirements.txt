@@ -4,4 +4,4 @@ pillow
 pandas
 xlsxwriter
 retrying
-chromedriver-autoinstaller
+webdriver-manager

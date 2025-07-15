@@ -1,9 +1,12 @@
+# render.yaml
 services:
   - type: web
-    name: twitter-streamlit-app
+    name: twitter-impersonation-scrapper
     env: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: streamlit run app.py --server.port=10000 --server.address=0.0.0.0
-    envVars:
-      - key: PYTHON_VERSION
-        value: 3.10.13
+    buildCommand: |
+      apt-get update && apt-get install -y wget unzip curl
+      wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+      apt-get install -y ./google-chrome-stable_current_amd64.deb
+      pip install -r requirements.txt
+    startCommand: streamlit run app.py --server.port $PORT
+    autoDeploy: true

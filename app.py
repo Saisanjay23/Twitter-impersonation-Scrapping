@@ -5,8 +5,6 @@ import time
 import random
 import base64
 import contextlib
-import chromedriver_autoinstaller
-chromedriver_autoinstaller.install()
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -22,23 +20,23 @@ st.set_page_config(page_title="Twitter Impersonation Checker", layout="wide")
 @contextlib.contextmanager
 @contextlib.contextmanager
 def get_driver(headless=True):
-    import chromedriver_autoinstaller
-    chromedriver_autoinstaller.install()
+    from selenium.webdriver.chrome.service import Service
+    from webdriver_manager.chrome import ChromeDriverManager
+
+    options = webdriver.ChromeOptions()
+    options.binary_location = "/usr/bin/google-chrome"  # Render path
+    if headless:
+        options.add_argument("--headless=new")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--disable-extensions")
+    options.add_argument("--window-size=1920,1080")
+
     driver = None
     try:
-        options = webdriver.ChromeOptions()
-        options.add_argument("--no-sandbox")
-        options.add_argument("--disable-dev-shm-usage")
-        options.add_argument("--disable-gpu")
-        options.add_argument("--window-size=1920,1080")
-        options.add_argument("--high-dpi-support=1")
-        options.add_argument("--force-device-scale-factor=1")
-        if headless:
-            options.add_argument("--headless=new")
-        driver = webdriver.Chrome(options=options)
+        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
         driver.set_page_load_timeout(30)
-        driver.get("https://x.com")
-        time.sleep(2)
         yield driver
     except Exception as e:
         st.error(f"❌ WebDriver launch failed: {e}")
@@ -46,6 +44,7 @@ def get_driver(headless=True):
     finally:
         if driver:
             driver.quit()
+
 
 
 @retry(stop_max_attempt_number=3, wait_fixed=2000)
