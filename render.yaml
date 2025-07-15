@@ -2,13 +2,11 @@ services:
   - type: web
     name: twitter-checker
     env: python
-    runtime: python
     plan: free
     buildCommand: |
       apt-get update
       apt-get install -y wget gnupg unzip curl
       wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-      apt-get install -y ./google-chrome-stable_current_amd64.deb
-      ln -s /usr/bin/google-chrome /usr/local/bin/google-chrome
+      apt install -y ./google-chrome-stable_current_amd64.deb
       pip install -r requirements.txt
     startCommand: streamlit run app.py --server.port=$PORT --server.address=0.0.0.0

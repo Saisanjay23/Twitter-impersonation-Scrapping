@@ -23,7 +23,8 @@ def get_driver(headless=True):
     from webdriver_manager.chrome import ChromeDriverManager
 
     options = webdriver.ChromeOptions()
-    options.binary_location = "/usr/bin/google-chrome"  # Render path
+    options.binary_location = "/usr/bin/google-chrome-stable"
+  # Render path
     if headless:
         options.add_argument("--headless=new")
     options.add_argument("--no-sandbox")
