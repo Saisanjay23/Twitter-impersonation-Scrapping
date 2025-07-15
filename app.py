@@ -11,8 +11,10 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from retrying import retry
+from io import BytesIO
+from PIL import Image
+import xlsxwriter
 
-# Streamlit Page Setup
 st.set_page_config(page_title="Twitter Impersonation Checker", layout="wide")
 
 @contextlib.contextmanager
@@ -81,7 +83,6 @@ def evaluate_priority(result):
     elif has_keyword and created_months is not None and created_months > 6:
         return 3, "Low"
     return 2, "Low"
-
 def scrape_profile(driver, url):
     result = {
         "Original Name": "", "Original feed": "", "IMPERSONATED": url,
@@ -148,6 +149,7 @@ def scrape_profile(driver, url):
 
     return result, {}
 
+
 def capture_profile_screenshot(driver, url):
     images = {"profile_screenshot": None}
     try:
@@ -165,6 +167,50 @@ def display_image(img_bytes, label="View Screenshot"):
         with st.expander(label):
             st.image(img_bytes, use_container_width=True)
 
+def create_excel_with_images(df, images_dict):
+    output = BytesIO()
+    workbook = xlsxwriter.Workbook(output, {'in_memory': True})
+    worksheet = workbook.add_worksheet()
+
+    for col_num, header in enumerate(df.columns):
+        worksheet.write(0, col_num, header)
+    img_col_index = len(df.columns)
+    worksheet.write(0, img_col_index, "Screenshot")
+    worksheet.set_column(img_col_index, img_col_index, 25)
+
+    desired_img_width = 100
+    desired_img_height = 80
+
+    for row_num, row in df.iterrows():
+        excel_row = row_num + 1
+        for col_num, value in enumerate(row):
+            worksheet.write(excel_row, col_num, value)
+
+        worksheet.set_row(excel_row, desired_img_height * 0.75)
+
+        img_data = images_dict[row["IMPERSONATED"]]["profile_screenshot"]
+        if img_data:
+              img_buf = BytesIO(img_data)  # No resize
+    worksheet.insert_image(
+        excel_row, img_col_index,
+        "screenshot.png",
+        {
+            'image_data': img_buf,
+            'x_offset': 5,
+            'y_offset': 2,
+            'x_scale': 0.25,  # Adjust to fit
+            'y_scale': 0.25,
+            'object_position': 1,
+            'positioning': 1
+        }
+    )
+
+
+    workbook.close()
+    output.seek(0)
+    return output
+
+# Streamlit UI
 st.title("🕵 Twitter/X Impersonation Checker")
 st.markdown("Paste up to 20 Twitter profile URLs (one per line) to scrape impersonator data.")
 
@@ -230,11 +276,17 @@ if "scraped_results" in st.session_state and st.session_state.scraped_results:
             else:
                 st.write("No screenshot available")
 
-    with st.expander("📋 Copy All Results"):
-        all_text = "\n".join("\t".join(str(row[col]) for col in df.columns) for _, row in df.iterrows())
-        st.code(all_text, language="text")
+    st.download_button(
+        "📥 Download CSV",
+        df.to_csv(index=False).encode(),
+        file_name=f"twitter_results_{datetime.datetime.now().strftime('%Y%m%d')}.csv",
+        mime="text/csv"
+    )
 
-    csv_name = f"twitter_results_{datetime.datetime.now().strftime('%Y%m%d')}.csv"
-    st.download_button("📥 Download CSV", df.to_csv(index=False).encode(), file_name=csv_name, mime="text/csv")
-else:
-    st.info("Paste some Twitter profile URLs and click Scrape Profiles.")
+    excel_file = create_excel_with_images(df, images_dict)
+    st.download_button(
+        label="📥 Download Excel with Embedded Images",
+        data=excel_file,
+        file_name="twitter_results_with_screenshots.xlsx",
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
