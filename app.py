@@ -10,6 +10,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 from retrying import retry
 from io import BytesIO
 from PIL import Image
@@ -19,12 +21,10 @@ st.set_page_config(page_title="Twitter Impersonation Checker", layout="wide")
 
 @contextlib.contextmanager
 def get_driver(headless=True):
-    from selenium.webdriver.chrome.service import Service
-    from webdriver_manager.chrome import ChromeDriverManager
+    
 
     options = webdriver.ChromeOptions()
-    options.binary_location = "/usr/bin/google-chrome-stable"
-  # Render path
+    options.binary_location = "/opt/google/chrome/google-chrome"
     if headless:
         options.add_argument("--headless=new")
     options.add_argument("--no-sandbox")
