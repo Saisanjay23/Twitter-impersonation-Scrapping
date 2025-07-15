@@ -5,7 +5,9 @@ import time
 import random
 import base64
 import contextlib
-import undetected_chromedriver as uc
+import chromedriver_autoinstaller
+chromedriver_autoinstaller.install()
+from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -21,7 +23,7 @@ st.set_page_config(page_title="Twitter Impersonation Checker", layout="wide")
 def get_driver(headless=True):
     driver = None
     try:
-        options = uc.ChromeOptions()
+        options = webdriver.ChromeOptions()
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
         options.add_argument("--disable-gpu")
@@ -30,7 +32,7 @@ def get_driver(headless=True):
         options.add_argument("--force-device-scale-factor=1")
         if headless:
             options.add_argument("--headless=new")
-        driver = uc.Chrome(version_main=137, options=options)
+        driver = webdriver.Chrome(options=options)
         driver.set_page_load_timeout(30)
         driver.get("https://x.com")
         time.sleep(2)
