@@ -18,7 +18,6 @@ import xlsxwriter
 st.set_page_config(page_title="Twitter Impersonation Checker", layout="wide")
 
 @contextlib.contextmanager
-@contextlib.contextmanager
 def get_driver(headless=True):
     from selenium.webdriver.chrome.service import Service
     from webdriver_manager.chrome import ChromeDriverManager
@@ -194,21 +193,21 @@ def create_excel_with_images(df, images_dict):
         worksheet.set_row(excel_row, desired_img_height * 0.75)
 
         img_data = images_dict[row["IMPERSONATED"]]["profile_screenshot"]
-    if img_data:
-       img_buf = BytesIO(img_data)
-    worksheet.insert_image(
-        excel_row, img_col_index,
-        "screenshot.png",
-        {
-            'image_data': img_buf,
-            'x_offset': 5,
-            'y_offset': 2,
-            'x_scale': 0.25,
-            'y_scale': 0.25,
-            'object_position': 1,
-            'positioning': 1
-        }
-    )
+        if img_data:
+          img_buf = BytesIO(img_data)
+          worksheet.insert_image(
+          excel_row, img_col_index,
+          "screenshot.png",
+          {
+              'image_data': img_buf,
+              'x_offset': 5,
+              'y_offset': 2,
+              'x_scale': 0.25,
+              'y_scale': 0.25,
+              'object_position': 1,
+              'positioning': 1
+          }
+      )
 
 
 

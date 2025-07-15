@@ -1,12 +1,13 @@
-# render.yaml
 services:
   - type: web
-    name: twitter-impersonation-scrapper
+    name: twitter-checker
     env: python
     buildCommand: |
-      apt-get update && apt-get install -y wget unzip curl
+      apt-get update
+      apt-get install -y wget gnupg unzip curl
       wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-      apt-get install -y ./google-chrome-stable_current_amd64.deb
+      apt install -y ./google-chrome-stable_current_amd64.deb
       pip install -r requirements.txt
-    startCommand: streamlit run app.py --server.port $PORT
-    autoDeploy: true
+    startCommand: streamlit run app.py --server.port=$PORT --server.address=0.0.0.0
+    plan: free
+    runtime: python
