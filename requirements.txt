@@ -1,5 +1,7 @@
 streamlit
 pandas
-undetected-chromedriver
 selenium
+undetected-chromedriver
 retrying
+pillow
+xlsxwriter
