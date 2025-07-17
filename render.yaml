@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: twitter-checker
+    env: python
+    buildCommand: ./setup.sh
+    startCommand: ./start.sh
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: CHROME_BIN
+        value: /opt/chrome/chrome
