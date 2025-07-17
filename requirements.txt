@@ -1,7 +1,9 @@
 streamlit
-selenium
 pandas
-xlsxwriter
-retrying
+undetected-chromedriver
+selenium
 Pillow
-webdriver-manager
+retrying
+setuptools
+xlsxwriter
+
