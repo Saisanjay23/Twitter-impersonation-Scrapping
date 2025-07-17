@@ -25,7 +25,7 @@ st.markdown("Paste up to 20 Twitter profile URLs (one per line) to scrape impers
 
 @contextlib.contextmanager
 def get_driver(headless=True):
-    driver = None
+    driver = None 
     try:
         options = uc.ChromeOptions()
         options.add_argument("--no-sandbox")

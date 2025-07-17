@@ -6,4 +6,3 @@ Pillow
 retrying
 setuptools
 xlsxwriter
-
